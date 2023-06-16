@@ -1,0 +1,18 @@
+﻿.entriesContainer {
+    display: flex;
+    flex-direction: column;
+}
+
+.entryContainer {
+    display: flex;
+    flex-direction: row;
+    background-color: lightgray;
+    padding: 5px;
+}
+
+.entryName {
+    margin-right: auto;
+}
+
+.entryDownload {
+}

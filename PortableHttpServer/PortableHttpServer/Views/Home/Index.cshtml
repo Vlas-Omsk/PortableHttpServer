@@ -1,0 +1,28 @@
+﻿@model IndexViewModel
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="entriesContainer">
+    @foreach (var entry in Model.Entries)
+    {
+        <div class="entryContainer">
+            @switch (entry.Type)
+            {
+                case EntryModelType.File:
+                    <span class="entryName">@entry.Name</span>
+                    <a 
+                        class="entryDownload" 
+                        href="/download@(entry.Url)"
+                    >Download</a>
+                    break;
+                default:
+                    <a 
+                        class="entryName"
+                        href="@entry.Url"
+                    >@entry.Name</a>
+                    break;
+            }
+        </div>
+    }
+</div>
