@@ -2,7 +2,7 @@
 
 namespace PortableHttpServer.Models
 {
-    public sealed record IndexViewModel(
+    public sealed record HomeIndexViewModel(
         ImmutableArray<EntryModel> Entries
     );
 }

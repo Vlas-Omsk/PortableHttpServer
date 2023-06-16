@@ -2,7 +2,7 @@
   "profiles": {
     "http": {
       "commandName": "Project",
-      "commandLineArgs": "F:\\Games\\Super.Bunny.Man.v1.0.0\\Game -port=5163",
+      "commandLineArgs": "F:\\nastya -port=5163",
       "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
@@ -12,7 +12,7 @@
     },
     "https": {
       "commandName": "Project",
-      "commandLineArgs": "F:\\Games\\Super.Bunny.Man.v1.0.0\\Game -port=7009 -https",
+      "commandLineArgs": "F:\\nastya -port=7009 -https",
       "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"

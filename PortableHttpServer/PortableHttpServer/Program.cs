@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Server.Kestrel.Core;
+using PortableHttpServer.Services;
 using System.Collections.Immutable;
 
 namespace PortableHttpServer
@@ -35,29 +36,32 @@ namespace PortableHttpServer
             var port = 8080;
             var useHttps = false;
 
-            do
+            if (enumrator.Current != null)
             {
-                var item = (string)enumrator.Current;
-
-                if (!item.StartsWith(_prefix))
-                    throw new Exception("Invalid arguments syntax");
-
-                var split = item[_prefix.Length..].Split('=');
-
-                if (split.Length is not (2 or 1))
-                    throw new Exception("Invalid arguments syntax");
-
-                switch (split[0])
+                do
                 {
-                    case "port":
-                        port = int.Parse(split[1]);
-                        break;
-                    case "https":
-                        useHttps = true;
-                        break;
+                    var item = (string)enumrator.Current;
+
+                    if (!item.StartsWith(_prefix))
+                        throw new Exception("Invalid arguments syntax");
+
+                    var split = item[_prefix.Length..].Split('=');
+
+                    if (split.Length is not (2 or 1))
+                        throw new Exception("Invalid arguments syntax");
+
+                    switch (split[0])
+                    {
+                        case "port":
+                            port = int.Parse(split[1]);
+                            break;
+                        case "https":
+                            useHttps = true;
+                            break;
+                    }
                 }
+                while (enumrator.MoveNext());
             }
-            while (enumrator.MoveNext());
 
             var builder = WebApplication.CreateBuilder();
 
@@ -73,6 +77,7 @@ namespace PortableHttpServer
             });
 
             builder.Services.AddControllersWithViews();
+            builder.Services.AddSingleton<LocatorService>();
             builder.Services.AddSingleton(
                 new Config(paths.ToImmutable())
             );
@@ -89,12 +94,12 @@ namespace PortableHttpServer
 
             app.MapControllerRoute(
                 name: "download",
-                pattern: "/download/{*path}",
+                pattern: "/download/{*publicPath}",
                 defaults: new { controller = "Home", action = "Download" }
             );
             app.MapControllerRoute(
                 name: "default",
-                pattern: "/{*path}",
+                pattern: "/{*publicPath}",
                 defaults: new { controller = "Home", action = "Index" }
             );
 

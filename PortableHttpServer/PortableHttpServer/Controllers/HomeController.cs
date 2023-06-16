@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using PortableHttpServer.Models;
+using PortableHttpServer.Services;
 using System.Collections.Immutable;
-using System.Diagnostics.CodeAnalysis;
 
 namespace PortableHttpServer.Controllers
 {
@@ -10,66 +10,55 @@ namespace PortableHttpServer.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly Config _config;
+        private readonly LocatorService _locatorService;
 
         public HomeController(
             ILogger<HomeController> logger,
-            Config config
+            Config config,
+            LocatorService locatorService
         )
         {
             _logger = logger;
             _config = config;
+            _locatorService = locatorService;
         }
 
-        public IActionResult Index(string? path)
+        public IActionResult Index(string? publicPath)
         {
-            if (path == null)
-                return View(new IndexViewModel(
+            if (publicPath == null)
+                return View(new HomeIndexViewModel(
                     GetRootEntries().ToImmutableArray()
                 ));
 
-            if (!TryGetFullPath(path, out var absolutePath) ||
-                !Directory.Exists(absolutePath))
+            if (!_locatorService.TryGetFullPath(publicPath, out var fullPath) ||
+                !Directory.Exists(fullPath))
                 return NotFound();
 
-            return View(new IndexViewModel(
-                GetEntries(path, absolutePath).ToImmutableArray()
+            return View(new HomeIndexViewModel(
+                GetEntries(publicPath, fullPath).ToImmutableArray()
             ));
         }
 
-        public IActionResult Download(string? path)
+        public IActionResult Download(string? publicPath)
         {
-            if (path == null)
+            if (publicPath == null)
                 return NotFound();
 
-            if (!TryGetFullPath(path, out path) ||
-                !System.IO.File.Exists(path))
+            if (!_locatorService.TryGetFullPath(publicPath, out var fullPath) ||
+                !System.IO.File.Exists(fullPath))
                 return NotFound();
 
             if (!new FileExtensionContentTypeProvider()
-                    .TryGetContentType(path, out var contentType))
+                    .TryGetContentType(fullPath, out var contentType))
                 contentType = "application/octet-stream";
 
+            _logger.LogInformation("Downloading {path}", fullPath);
+
             return File(
-                System.IO.File.OpenRead(path),
-                contentType
+                System.IO.File.OpenRead(fullPath),
+                contentType,
+                true
             );
-        }
-
-        private bool TryGetFullPath(string path, [NotNullWhen(true)] out string? fullPath)
-        {
-            path = path.Replace('/', Path.DirectorySeparatorChar);
-
-            foreach (var configPath in _config.Paths)
-            {
-                if (path.StartsWith(configPath.Name))
-                {
-                    fullPath = Path.Combine(configPath.ParentDirectory, path);
-                    return true;
-                }
-            }
-
-            fullPath = null;
-            return false;
         }
 
         private IEnumerable<EntryModel> GetRootEntries()
@@ -83,32 +72,32 @@ namespace PortableHttpServer.Controllers
             );
         }
 
-        private static IEnumerable<EntryModel> GetEntries(string path, string absolutePath)
+        private static IEnumerable<EntryModel> GetEntries(string publicPath, string fullPath)
         {
             yield return new EntryModel(
                 "..",
-                $"/{string.Join('/', path.Split('/').SkipLast(1))}",
+                $"/{string.Join('/', publicPath.Split('/').SkipLast(1))}",
                 EntryModelType.Directory
             );
 
-            foreach (var directory in Directory.GetDirectories(absolutePath))
+            foreach (var directory in Directory.GetDirectories(fullPath))
             {
                 var name = Path.GetFileName(directory);
 
                 yield return new EntryModel(
                     name,
-                    $"/{path}/{name}",
+                    $"/{publicPath}/{name}",
                     EntryModelType.Directory
                 );
             }
 
-            foreach (var file in Directory.GetFiles(absolutePath))
+            foreach (var file in Directory.GetFiles(fullPath))
             {
                 var name = Path.GetFileName(file);
 
                 yield return new EntryModel(
                     name,
-                    $"/{path}/{name}",
+                    $"/{publicPath}/{name}",
                     EntryModelType.File
                 );
             }
