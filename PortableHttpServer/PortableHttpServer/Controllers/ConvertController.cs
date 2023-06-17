@@ -85,6 +85,8 @@ namespace PortableHttpServer.Controllers
                 arguments.Add("to", split[1]);
             }
 
+            _logger.LogInformation("Converting {path}", fullPath);
+
             return File(
                 _ffmpegProcessor.Start(arguments),
                 FileUtils.GetContentType(options.Output),
