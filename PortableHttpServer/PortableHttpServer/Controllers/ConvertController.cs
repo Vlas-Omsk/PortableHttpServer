@@ -89,7 +89,7 @@ namespace PortableHttpServer.Controllers
 
             return File(
                 _ffmpegProcessor.Start(arguments),
-                FileUtils.GetContentType(options.Output),
+                FileUtils.GetContentType($".{options.Output}"),
                 true
             );
         }
