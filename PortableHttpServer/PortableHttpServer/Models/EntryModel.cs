@@ -3,7 +3,9 @@
     public sealed record EntryModel(
         string Name,
         string Url,
-        EntryModelType Type
+        string? Size,
+        EntryModelType Type,
+        bool IsConvertible
     );
 
     public enum EntryModelType

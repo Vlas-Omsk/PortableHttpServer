@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.StaticFiles;
 using PortableHttpServer.Models;
 using PortableHttpServer.Services;
 using System.Collections.Immutable;
+using System.IO;
 
 namespace PortableHttpServer.Controllers
 {
@@ -48,15 +48,11 @@ namespace PortableHttpServer.Controllers
                 !System.IO.File.Exists(fullPath))
                 return NotFound();
 
-            if (!new FileExtensionContentTypeProvider()
-                    .TryGetContentType(fullPath, out var contentType))
-                contentType = "application/octet-stream";
-
             _logger.LogInformation("Downloading {path}", fullPath);
 
             return File(
                 System.IO.File.OpenRead(fullPath),
-                contentType,
+                FileUtils.GetContentType(fullPath),
                 true
             );
         }
@@ -67,7 +63,9 @@ namespace PortableHttpServer.Controllers
                 x => new EntryModel(
                     x.Name,
                     $"/{x.Name}",
-                    EntryModelType.Directory
+                    null,
+                    EntryModelType.Directory,
+                    false
                 )
             );
         }
@@ -77,7 +75,9 @@ namespace PortableHttpServer.Controllers
             yield return new EntryModel(
                 "..",
                 $"/{string.Join('/', publicPath.Split('/').SkipLast(1))}",
-                EntryModelType.Directory
+                null,
+                EntryModelType.Directory,
+                false
             );
 
             foreach (var directory in Directory.GetDirectories(fullPath))
@@ -87,7 +87,9 @@ namespace PortableHttpServer.Controllers
                 yield return new EntryModel(
                     name,
                     $"/{publicPath}/{name}",
-                    EntryModelType.Directory
+                    null,
+                    EntryModelType.Directory,
+                    false
                 );
             }
 
@@ -98,7 +100,9 @@ namespace PortableHttpServer.Controllers
                 yield return new EntryModel(
                     name,
                     $"/{publicPath}/{name}",
-                    EntryModelType.File
+                    new FileInfo(file).FormatBytes(),
+                    EntryModelType.File,
+                    FileUtils.IsFileConvertible(name)
                 );
             }
         }

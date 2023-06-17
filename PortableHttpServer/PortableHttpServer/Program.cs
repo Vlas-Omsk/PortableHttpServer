@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Server.Kestrel.Core;
+using PortableHttpServer.Ffmpeg;
 using PortableHttpServer.Services;
 using System.Collections.Immutable;
 
@@ -79,6 +80,9 @@ namespace PortableHttpServer
             builder.Services.AddControllersWithViews();
             builder.Services.AddSingleton<LocatorService>();
             builder.Services.AddSingleton(
+                new FfmpegProcessor("ffmpeg")
+            );
+            builder.Services.AddSingleton(
                 new Config(paths.ToImmutable())
             );
 
@@ -92,6 +96,16 @@ namespace PortableHttpServer
             app.UseRouting();
             app.UseAuthorization();
 
+            app.MapControllerRoute(
+                name: "convert_download",
+                pattern: "/convert/download/{*publicPath}",
+                defaults: new { controller = "Convert", action = "Download" }
+            );
+            app.MapControllerRoute(
+                name: "convert",
+                pattern: "/convert/{*publicPath}",
+                defaults: new { controller = "Convert", action = "Index" }
+            );
             app.MapControllerRoute(
                 name: "download",
                 pattern: "/download/{*publicPath}",

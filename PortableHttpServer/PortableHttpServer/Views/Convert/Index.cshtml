@@ -1,4 +1,41 @@
-﻿@model HomeIndexViewModel
+﻿@model ConvertIndexViewModel
 @{
     ViewData["Title"] = "Convert - Index";
 }
+
+<form method="get" action="/convert/download/@(Model.PublicPath)">
+    <table>
+        <tr>
+            <td><p>Output</p></td>
+            <td><input type="text" name="output" value="mp4" required /></td>
+        </tr>
+        <tr>
+            <td><p>Size</p></td>
+            <td>
+                <input type="text" name="size" placeholder="1280x720" list="sizes" />
+                <datalist id="sizes">
+                    <option value="1920x1080" />
+                    <option value="1280x720" />
+                </datalist>
+            </td>
+        </tr>
+        <tr>
+            <td><p>Video bitrate</p></td>
+            <td><input type="text" name="video_bitrate" /></td>
+        </tr>
+        <tr>
+            <td><p>Audio bitrate</p></td>
+            <td><input type="text" name="audio_bitrate" /></td>
+        </tr>
+        <tr>
+            <td><p>Crf</p></td>
+            <td><input type="text" name="crf" placeholder="23" /></td>
+        </tr>
+        <tr>
+            <td><p>Cut</p></td>
+            <td><input type="text" name="cut" placeholder="00:00:00-00:10:00" /></td>
+        </tr>
+    </table>
+
+    <input type="submit" value="Download">
+</form>

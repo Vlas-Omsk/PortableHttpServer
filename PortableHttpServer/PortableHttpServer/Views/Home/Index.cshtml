@@ -10,9 +10,22 @@
             @switch (entry.Type)
             {
                 case EntryModelType.File:
-                    <span class="entryName">@entry.Name</span>
+                    <div class="entryTitle">
+                        <span>@entry.Name</span>
+                        @if (entry.Size != null)
+                        {
+                            <span class="entrySize">(@entry.Size)</span>
+                        }
+                    </div>
+                    @if (entry.IsConvertible)
+                    {
+                        <a 
+                            class="entryAction"
+                            href="/convert@(entry.Url)"
+                        >Convert</a>
+                    }
                     <a 
-                        class="entryDownload" 
+                        class="entryAction"
                         href="/download@(entry.Url)"
                     >Download</a>
                     break;
