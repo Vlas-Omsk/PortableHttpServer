@@ -3,6 +3,10 @@
 namespace PortableHttpServer
 {
     public sealed record Config(
-        ImmutableArray<ConfigPath> Paths
+        int Port,
+        bool UseHttps,
+        ImmutableArray<Entry> Entries,
+        string FfmpegPath,
+        int? VideoConvertMaxThreads
     );
 }

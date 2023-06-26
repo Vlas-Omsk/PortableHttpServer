@@ -1,6 +1,6 @@
 ﻿namespace PortableHttpServer.Models
 {
-    public sealed record ConvertIndexViewModel(
+    public sealed record ConvertVideoIndexViewModel(
         string PublicPath
     );
 }

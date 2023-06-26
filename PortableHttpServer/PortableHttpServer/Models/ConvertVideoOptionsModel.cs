@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace PortableHttpServer.Models
 {
-    public sealed class ConvertOptionsModel
+    public sealed class ConvertVideoOptionsModel
     {
         [BindRequired]
         [BindProperty(Name = "output")]

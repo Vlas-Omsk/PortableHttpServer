@@ -1,9 +1,9 @@
-﻿@model ConvertIndexViewModel
+﻿@model ConvertVideoIndexViewModel
 @{
-    ViewData["Title"] = "Convert - Index";
+    ViewData["Title"] = "Convert video - Index";
 }
 
-<form method="get" action="/convert/download/@(Model.PublicPath)">
+<form method="get" action="@Url.CreateUnescapedRouteUrl("convert_video_download", new { publicPath = Model.PublicPath })">
     <table>
         <tr>
             <td><p>Output</p></td>

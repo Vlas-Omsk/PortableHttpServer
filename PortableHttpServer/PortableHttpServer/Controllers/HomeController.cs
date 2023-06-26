@@ -2,7 +2,6 @@
 using PortableHttpServer.Models;
 using PortableHttpServer.Services;
 using System.Collections.Immutable;
-using System.IO;
 
 namespace PortableHttpServer.Controllers
 {
@@ -59,10 +58,10 @@ namespace PortableHttpServer.Controllers
 
         private IEnumerable<EntryModel> GetRootEntries()
         {
-            return _config.Paths.Select(
+            return _config.Entries.Select(
                 x => new EntryModel(
                     x.Name,
-                    $"/{x.Name}",
+                    $"{x.Name}",
                     null,
                     EntryModelType.Directory,
                     false
@@ -74,7 +73,7 @@ namespace PortableHttpServer.Controllers
         {
             yield return new EntryModel(
                 "..",
-                $"/{string.Join('/', publicPath.Split('/').SkipLast(1))}",
+                $"{string.Join('/', publicPath.Split('/').SkipLast(1))}",
                 null,
                 EntryModelType.Directory,
                 false
@@ -86,7 +85,7 @@ namespace PortableHttpServer.Controllers
 
                 yield return new EntryModel(
                     name,
-                    $"/{publicPath}/{name}",
+                    $"{publicPath}/{name}",
                     null,
                     EntryModelType.Directory,
                     false
@@ -99,10 +98,10 @@ namespace PortableHttpServer.Controllers
 
                 yield return new EntryModel(
                     name,
-                    $"/{publicPath}/{name}",
+                    $"{publicPath}/{name}",
                     new FileInfo(file).FormatBytes(),
                     EntryModelType.File,
-                    FileUtils.IsFileConvertible(name)
+                    FileUtils.IsVideoConvertible(name)
                 );
             }
         }

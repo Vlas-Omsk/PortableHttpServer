@@ -5,7 +5,7 @@
         string Url,
         string? Size,
         EntryModelType Type,
-        bool IsConvertible
+        bool IsVideoConvertible
     );
 
     public enum EntryModelType

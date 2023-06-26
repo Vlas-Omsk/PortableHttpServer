@@ -17,22 +17,22 @@
                             <span class="entrySize">(@entry.Size)</span>
                         }
                     </div>
-                    @if (entry.IsConvertible)
+                    @if (entry.IsVideoConvertible)
                     {
                         <a 
                             class="entryAction"
-                            href="/convert@(entry.Url)"
-                        >Convert</a>
+                            href="@Url.CreateUnescapedRouteUrl("convert_video", new { publicPath = entry.Url })"
+                        >Convert video</a>
                     }
                     <a 
                         class="entryAction"
-                        href="/download@(entry.Url)"
+                        href="@Url.CreateUnescapedRouteUrl("download", new { publicPath = entry.Url })"
                     >Download</a>
                     break;
                 default:
                     <a 
                         class="entryName"
-                        href="@entry.Url"
+                        href="@Url.CreateUnescapedRouteUrl("default", new { publicPath = entry.Url })"
                     >@entry.Name</a>
                     break;
             }

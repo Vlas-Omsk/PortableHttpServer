@@ -1,6 +1,6 @@
 ﻿namespace PortableHttpServer
 {
-    public sealed record ConfigPath(
+    public sealed record Entry(
         string Name,
         string ParentDirectory
     );

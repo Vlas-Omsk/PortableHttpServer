@@ -5,15 +5,15 @@ using PortableHttpServer.Services;
 
 namespace PortableHttpServer.Controllers
 {
-    public sealed class ConvertController : Controller
+    public sealed class ConvertVideoController : Controller
     {
-        private readonly ILogger<ConvertController> _logger;
+        private readonly ILogger<ConvertVideoController> _logger;
         private readonly Config _config;
         private readonly FfmpegProcessor _ffmpegProcessor;
         private readonly LocatorService _locatorService;
 
-        public ConvertController(
-            ILogger<ConvertController> logger,
+        public ConvertVideoController(
+            ILogger<ConvertVideoController> logger,
             Config config,
             FfmpegProcessor ffmpegProcessor,
             LocatorService locatorService
@@ -30,10 +30,10 @@ namespace PortableHttpServer.Controllers
             if (publicPath == null)
                 return NotFound();
 
-            return View(new ConvertIndexViewModel(publicPath));
+            return View(new ConvertVideoIndexViewModel(publicPath));
         }
 
-        public IActionResult Download(string? publicPath, ConvertOptionsModel options)
+        public IActionResult Download(string? publicPath, ConvertVideoOptionsModel options)
         {
             if (publicPath == null)
                 return NotFound();
@@ -46,8 +46,12 @@ namespace PortableHttpServer.Controllers
                 return NotFound();
 
             var arguments = new FfmpegArguments()
-                .Add("hwaccel", "auto")
-                //.Add("threads", "2")
+                .Add("hwaccel", "auto");
+
+            if (_config.VideoConvertMaxThreads.HasValue)
+                arguments.Add("threads", _config.VideoConvertMaxThreads.Value.ToString());
+
+            arguments
                 .Add("i", fullPath)
                 .Add("f", options.Output);
 

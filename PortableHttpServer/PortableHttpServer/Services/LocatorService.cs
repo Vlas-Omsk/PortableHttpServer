@@ -15,7 +15,7 @@ namespace PortableHttpServer.Services
         {
             publicPath = publicPath.Replace('/', Path.DirectorySeparatorChar);
 
-            foreach (var configPath in _config.Paths)
+            foreach (var configPath in _config.Entries)
             {
                 if (publicPath.StartsWith(configPath.Name))
                 {
