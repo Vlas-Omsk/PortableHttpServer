@@ -12,7 +12,10 @@ namespace PortableHttpServer
         public static void Main(string[] args)
         {
             var config = ParseConfig(args);
-            var builder = WebApplication.CreateBuilder();
+            var builder = WebApplication.CreateBuilder(new WebApplicationOptions()
+            {
+                ContentRootPath = Path.GetFullPath(AppDomain.CurrentDomain.BaseDirectory)
+            });
 
             builder.WebHost.ConfigureKestrel((context, options) =>
             {
@@ -124,7 +127,6 @@ namespace PortableHttpServer
                         case "videoConvertMaxThreads":
                             videoConvertMaxThreads = int.Parse(split[1]);
                             break;
-
                     }
                 }
                 while (enumrator.MoveNext());
