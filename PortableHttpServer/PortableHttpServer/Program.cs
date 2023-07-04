@@ -94,42 +94,60 @@ namespace PortableHttpServer
                 );
             }
 
+            if (entries.Count == 0)
+            {
+                var item = Path.GetFullPath(Directory.GetCurrentDirectory());
+
+                entries.Add(
+                    new Entry(
+                        Path.GetFileName(item),
+                        string.Join('/', item.Split('/', '\\').SkipLast(1))
+                    )
+                );
+            }
+
             var port = 8080;
             var useHttps = false;
             var ffmpegPath = "ffmpeg";
             var videoConvertMaxThreads = (int?)null;
 
-            if (enumrator.Current != null)
+            try
             {
-                do
+                if (enumrator.Current != null)
                 {
-                    var item = (string)enumrator.Current;
-
-                    if (!item.StartsWith(_prefix))
-                        throw new Exception("Invalid arguments syntax");
-
-                    var split = item[_prefix.Length..].Split('=');
-
-                    if (split.Length is not (2 or 1))
-                        throw new Exception("Invalid arguments syntax");
-
-                    switch (split[0])
+                    do
                     {
-                        case "port":
-                            port = int.Parse(split[1]);
-                            break;
-                        case "https":
-                            useHttps = true;
-                            break;
-                        case "ffmpeg":
-                            ffmpegPath = split[1];
-                            break;
-                        case "videoConvertMaxThreads":
-                            videoConvertMaxThreads = int.Parse(split[1]);
-                            break;
+                        var item = (string)enumrator.Current;
+
+                        if (!item.StartsWith(_prefix))
+                            throw new Exception("Invalid arguments syntax");
+
+                        var split = item[_prefix.Length..].Split('=');
+
+                        if (split.Length is not (2 or 1))
+                            throw new Exception("Invalid arguments syntax");
+
+                        switch (split[0])
+                        {
+                            case "port":
+                                port = int.Parse(split[1]);
+                                break;
+                            case "https":
+                                useHttps = true;
+                                break;
+                            case "ffmpeg":
+                                ffmpegPath = split[1];
+                                break;
+                            case "videoConvertMaxThreads":
+                                videoConvertMaxThreads = int.Parse(split[1]);
+                                break;
+                        }
                     }
+                    while (enumrator.MoveNext());
                 }
-                while (enumrator.MoveNext());
+            }
+            catch
+            {
             }
 
             return new Config(
